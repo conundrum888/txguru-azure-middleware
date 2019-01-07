@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json.schemastore.org/proxies",
+    "proxies": {
+        "default": {
+            "matchCondition": {
+                "methods": [ "POST","GET" ],
+                "route": "/{*x}"
+            },
+            "backendUri": "https://localhost/api/handleRequest?path={x}"
+        }
+    }
+}
