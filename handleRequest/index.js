@@ -1,22 +1,15 @@
-// const path = require('path');
-// const https = require('https');
 const request = require('request');
 const async = require('async');
-// const azure = require("@azure/storage-blob");
 const {
         Aborter,
         ContainerURL,
         ServiceURL,
         StorageURL,
-        // AnonymousCredential,
         SharedKeyCredential,
         BlobURL,
-        // SharedAccessBlobPolicy,
         IBlobSASSignatureValues,
         generateBlobSASQueryParameters,
-        // IBlobSASSignatureValues
         BlockBlobURL,
-        // TokenCredential 
     } = require("@azure/storage-blob");
 
 
@@ -33,10 +26,6 @@ const getContentTypeHeader = function (headers){
     Object.keys(headers).forEach(k => {
         if (k.toLowerCase()=='content-type' ) {
             output = headers[k];
-            // mimetype = headers[k];
-            // if (mimetype.toLowerCase().indexOf('application/json')>=0) {
-            //     return mimetype;
-            // }
         }
     });
     return output;
@@ -51,48 +40,16 @@ const getSasString = function(permissions, blobName) {
     }
     sasString = generateBlobSASQueryParameters(
         signValues,
-        sharedKeyCredential,
+        sharedKeyCredential
     ).toString();
     return sasString;
 
 }
 const handleResponse = function (x, context) {
 
-    // context.res = {
-    //     // status: 500,
-    //     body: `typeof ${typeof x} body:${JSON.stringify(x)}`,
-    //     // headers:{'content-type':'application/json'}
-    // };
-    // context.done();
-    // return;
-
-    // let x = {}
-    // try {
-    //     x = JSON.parse(body)
-    // } catch (e){
-    //     context.res = {
-    //         status: 400,
-    //         body: `${e}`,
-    //         // headers:{'content-type':'application/json'}
-    //     };
-    //     context.done();
-    //     return;
-    // }
-    
-    // context.res = {
-    //     body: x,
-    //     headers:{'content-type': 'application/json'}
-    // };
-    // context.done()
-
-    
-
-
-    
 
     if (!x['Send']) {
         context.res = {
-            // status: 500,
             body: x
         };
         context.done();
@@ -101,12 +58,6 @@ const handleResponse = function (x, context) {
 
     let output = [];
 
-    // context.res = {
-    //     body: x,
-    //     headers:{'content-type':'application/json'}
-    // };
-    // context.done();
-    // return;
     async.each(x['Send'], function(element, callback1){
         switch (element.Service) {
             case 's3':
@@ -143,22 +94,9 @@ const returnContainerURL = function() {
     if (containerURL) {
         return containerURL;
     }
-    // const account = STORAGE_ACCOUNT;
 
-    // const pipeline = StorageURL.newPipeline(new AnonymousCredential(), {
-    //     retryOptions: { maxTries: 4 }, // Retry options
-    //     // telemetry: { value: "HighLevelSample V1.0.0" } // Customized telemetry string
-    // });
-
-
-    // Use SharedKeyCredential with storage account and account key
-
-
-    // Use sharedKeyCredential, tokenCredential or anonymousCredential to create a pipeline
     const pipeline = StorageURL.newPipeline(sharedKeyCredential);
-
   
-
     const serviceURL = new ServiceURL(
         `https://${STORAGE_ACCOUNT}.blob.core.windows.net`,
         pipeline
@@ -169,16 +107,6 @@ const returnContainerURL = function() {
 }
 
 const s3Action = function(a) {
-
-// a.containerURL = containerURL;
-// context.res = {
-//     body: a,
-//     headers: {
-//         'Content-Type': 'application/json'
-//     }
-// };
-// context.done()
-// return;
 
         try{
             switch (a.Action) {
@@ -255,11 +183,6 @@ module.exports = function (context, req) {
  
         mimetype = getContentTypeHeader(res.headers);
         isJson = mimetype.indexOf('application/json')>=0;
-        // if (mimetype) {
-        //     options.headers= {'content-type': mimetype};
-        // } else {
-        //     isJson = false;
-        // }
         
         if (isJson ) {
             handleResponse(body, context);
